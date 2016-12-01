@@ -139,7 +139,7 @@ def read_signal(data, pos, header):
         for label in header['labels']:
             num_samples = header['num_samples'][label]
             for i in range(num_samples):
-                signal[label].append(int.from_bytes(data[pos:pos+2], byteorder='little', signed=True))
+                signal[label].append(int.from_bytes(list(data[pos], data[pos+1], data[pos+2]), byteorder='little', signed=True))
                 pos += 2
 
     return pos, signal 
