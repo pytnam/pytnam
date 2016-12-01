@@ -1,4 +1,4 @@
-import numpy as np
+from numpy import *
 import pyqtgraph as pg
 import sys
 import os
@@ -6,10 +6,12 @@ import Const        # file for keeping const variables
 from PyQt5.QtWidgets import QListWidget, QDockWidget, QLabel, QGridLayout, QApplication, QVBoxLayout, QLayout, QWidget, QPushButton, QMessageBox, QMainWindow, QGraphicsOpacityEffect, QAction, qApp, QFileDialog, QGroupBox
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from edf_reader import *
+from importer import *
+import random
 
 
 flag1 = 0
-
 
 class MainWindow(QMainWindow):      # class MainWindow inherits QMainWindow (class for program's main window purposes, inherits more general QWidget)
     def __init__(self):             # __init__ is a constructor, self as a parameter represents instance of the object which calls the method
@@ -17,7 +19,6 @@ class MainWindow(QMainWindow):      # class MainWindow inherits QMainWindow (cla
                                     # 'self' name goes by convention.
         super().__init__()          # super() returns parent object of the MainWindow class (here: QMainWindow) and then it's constructor is called
         self.setObjectName("MainWindowCSS")                       # setting instance (parent) name for CSS styling purposes
-
     def createUI(self):
 
         settingStyle = " QWidget#MainWindowCSS { background-image:url(./" + Const.BCKG_IMG_STRING + "); " \
@@ -78,26 +79,39 @@ class MainWindow(QMainWindow):      # class MainWindow inherits QMainWindow (cla
         showPlot = QAction("View plot", self)                      #will run viewPlotMethod() everytime its triggered
         showPlot.setShortcut("Ctrl+B")
         showPlot.setStatusTip("Show the plot made from loaded data")
-        showPlot.triggered.connect(self.viewPlotMethod)
+        showPlot.triggered.connect(lambda: self.viewPlotMethod(data))
 
         viewmenu.menuAction().setStatusTip("View menu")
         viewmenu.addAction(fullScreen)
-        viewmenu.addAction(showPlot)
+        #viewmenu.addAction(showPlot)           temporarily not added, implementation for pyqt5 signal emitting not trivial ;)
 
-    def viewPlotMethod(self):
+
+
+
+    def viewPlotMethod(self, Array):
         plotDockWidget = QDockWidget("Plot", self)
-        plotObject = pg.PlotWidget()                                #pyqtgraph class for making widget-ready plots
-        plotObject.plot(np.random.normal(size=500))
-
-        plotDockWidget.setWidget(plotObject)                        #making PlotWidget object set as QDockWidget
-
+        PlotLWidget = pg.GraphicsLayoutWidget()                                #pyqtgraph class for making widget-ready plots
+        #PlotLWidget.useOpenGL(True) sucks
+        asd = PlotLWidget.addPlot()
+        asd.hideAxis("left")
+        #PlotLWidget.nextRow = super().newNextRow
+        pen_list = ["r", "g", "c", "m", "y", "k", "w"]
+        x = 0                                                           #only 10 lines now
+        coeff = 0
+        for keys, values in Array.items():
+            if "EEG" in keys and x < 10:
+                curve1 = pg.PlotCurveItem(values[1]+coeff,pen=random.choice(pen_list)) # (connect = all)
+                asd.addItem(curve1)
+                x = x + 1
+                coeff = coeff + 2000
+        #plotObject.plot(values[1])
+        #asd.showAxis('bottom')
+        plotDockWidget.setWidget(PlotLWidget)                        #making PlotWidget object set as QDockWidget
         plotDockWidget.setFloating(0)                               #in default its docked in MainWindow, 1 = floating around
-
-        self.addDockWidget(Qt.RightDockWidgetArea, plotDockWidget)  #putting QDockWidget object on QMainWindow
-                                                                    #   (I will reimplement all these stuff with QLayouts)
-        plotDockWidget.visibilityChanged.connect(self.blankStyle)   #neighbouring dock widgets leave gaps between them
+        self.addDockWidget(Qt.RightDockWidgetArea, plotDockWidget)
+                                                                    #   (I will reimplement all this stuff with QLayouts)
+        #plotDockWidget.visibilityChanged.connect(self.blankStyle)   #neighbouring dock widgets leave gaps between them
                                                                     #   and it wasn't particularly good looking with the background
-
     def blankStyle(self):
         self.setStyleSheet(None)
 
@@ -123,12 +137,21 @@ class MainWindow(QMainWindow):      # class MainWindow inherits QMainWindow (cla
 
     def showDialog(self):                                           # returns path to the single file selected in dialog
         fileDialog = QFileDialog(self)
-        fileDialog.setNameFilter("*.txt")
+        fileDialog.setNameFilter("*.edf")
         fileDialog.setDirectory("\home")
-        fileDialog.exec()                                             # alternative is QWidget::show(), which doesn't block app flow (user can interact with fileName parent)
-        file_path = fileDialog.selectedFiles()                             # right now only one file can be selected
-
-        return(file_path)
+        if fileDialog.exec():                                             # alternative is QWidget::show(), which doesn't block app flow (user can interact with fileName parent)
+            file_path = fileDialog.selectedFiles()                             # right now only one file can be selected
+            print(file_path)
+        #return(file_path)
+            header, signal = read_edf(file_path[0])
+            global data                                                 # i cant reference to connect(slot) when assigning variable.. temporary workaround now
+            data = importer(header, signal)
+            self.viewPlotMethod(data)
+            #self.data_loaded.emit()
+        #np.set_printoptions(threshold=np.nan)
+        #for keys,values in data.items():
+        #    if keys == "EEG A1" or keys == "EEG A2":
+        #        self.viewPlotMethod(values[1])
 
                                                                     # exec() deletes memory references after the window is closed
                                                                     # show() let Qt preserve pointers and memory for that window (so it can be accessed multiple times or faster)
@@ -166,5 +189,4 @@ sys.exit(mainthread.exec())                    # Enters the main event loop and 
             # sys.exit([arg]). exit from python interpreter by raising SystemExit exception.
             # integer x as an arg gives specific exit code to the parent process (e.g. shell)
             # ("Process finished with exit code >>x<<""), 0 considered successful
-            # sys.exit ensures clean exit ie. all cleanup operations are performed within SystemExit exception
-
+# sys.exit ensures clean exit ie. all cleanup operations are performed within SystemExit exception
