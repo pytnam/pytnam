@@ -77,7 +77,7 @@ def read_header(data_file: FileIO):
         # this part of code reads the part of the header with the general information about the record
         for key, n, method in header_keys_static:
             hdr[key] = read_n_bytes(df, n, method)
-        return header
+        return hdr
 
     def dynamic_header(df: FileIO, hdr):
 
@@ -86,18 +86,18 @@ def read_header(data_file: FileIO):
 
         hdr['labels'] = []
         for i in range(ns):
-            header['labels'].append(df.read(16).strip().decode('ascii'))
+            hdr['labels'].append(df.read(16).strip().decode('ascii'))
 
         header_keys_dynamic = [('transducer', 80, str), ('physical_dim', 8, str), ('physical_min', 8, float),
                        ('physical_max', 8, float), ('digital_min', 8, float), ('digital_max', 8, float),
                        ('prefiltering', 80, str), ('num_samples', 8, int), ('reserved_signal', 32, str)]
 
         for key, n, method in header_keys_dynamic:
-            header[key] = defaultdict(method)
-            for label in header['labels']:
-                header[key][label] = read_n_bytes(df, n, method)
+            hdr[key] = defaultdict(method)
+            for label in hdr['labels']:
+                hdr[key][label] = read_n_bytes(df, n, method)
 
-        return header
+        return hdr
 
     header = defaultdict(lambda: None)
     header = static_header(data_file, header)
@@ -110,6 +110,7 @@ def read_signal(data_file, header):
 
     signal = defaultdict(list)
     num_records = header['num_records']
+    data_file.seek(header['header_bytes'])
     rest = bytes(data_file.read())
     offset = 0
     dt = np.dtype(np.int16)
@@ -118,7 +119,8 @@ def read_signal(data_file, header):
     for i in range(num_records):
         for label in header['labels']:
             num_samples = header['num_samples'][label]
-            signal[label] = np.frombuffer(rest, dtype=dt, count=num_samples, offset=offset)
+            signal[label].append(np.frombuffer(rest, dtype=dt, count=num_samples, offset=offset)[0])
             offset += num_samples * 2
 
     return signal
+
