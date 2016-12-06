@@ -61,6 +61,7 @@ def read_edf(path):
     for label in header['labels']:
         header['frequency'][label] = header['num_samples'][label]/header['record_duration']
     signal = read_signal(data_file, header)
+    data_file.close()
     return header, signal
 
 

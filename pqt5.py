@@ -89,7 +89,7 @@ class MainWindow(QMainWindow):      # class MainWindow inherits QMainWindow (cla
 
 
 
-    def viewPlotMethod(self, Array):
+    def viewPlotMethod(self, data):
         plotDockWidget = QDockWidget("Plot", self)
         PlotLWidget = pg.GraphicsLayoutWidget()                                #pyqtgraph class for making widget-ready plots
         #PlotLWidget.useOpenGL(True) sucks
@@ -98,13 +98,14 @@ class MainWindow(QMainWindow):      # class MainWindow inherits QMainWindow (cla
         #PlotLWidget.nextRow = super().newNextRow
         pen_list = ["r", "g", "c", "m", "y", "k", "w"]
         x = 0                                                           #only 10 lines now
-        coeff = 0
-        for keys, values in Array.items():
-            if "EEG" in keys and x < 10:
-                curve1 = pg.PlotCurveItem(values[1]+coeff,pen=random.choice(pen_list)) # (connect = all)
-                asd.addItem(curve1)
-                x = x + 1
-                coeff = coeff + 2000
+        for key in sorted(data.keys()):
+            if key == "info":
+                continue
+            if x >= 10:
+                break
+            curve1 = pg.PlotCurveItem(data[key][1], pen=[random.randint(0, 256), random.randint(0, 256), random.randint(0, 256), 255])  # (connect = all)
+            asd.addItem(curve1)
+            x += 1
         #plotObject.plot(values[1])
         #asd.showAxis('bottom')
         plotDockWidget.setWidget(PlotLWidget)                        #making PlotWidget object set as QDockWidget
