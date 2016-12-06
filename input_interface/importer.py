@@ -29,7 +29,7 @@ def importer(header, signal):
     for label in sorted(signal.keys()):
         freq = header['frequency'][label]
         time = [(0 + (x/freq)) for x in range(header['num_records']*header['num_samples'][label])]
-        data[label] = (np.array(time), np.array(signal[label]))
+        data[label] = (np.array(time), signal[label])
 
     data['info'] = defaultdict(lambda: None)
 

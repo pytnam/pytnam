@@ -109,17 +109,25 @@ def read_header(data_file: FileIO):
 
 def read_signal(data_file: FileIO, header):
 
-    signal = defaultdict(list)
+    signal = {}
     num_records = header['num_records']
     rest = bytes(data_file.read())
     offset = 0
     dt = np.dtype(np.int16)
     dt = dt.newbyteorder('<')
 
+    for label in header['labels']:
+        num_samples = header['num_samples'][label]
+        signal[label] = np.zeros(num_records * num_samples).reshape(num_records, num_samples)
+
     for i in range(num_records):
         for label in header['labels']:
             num_samples = header['num_samples'][label]
-            signal[label].extend(np.frombuffer(rest, dtype=dt, count=num_samples, offset=offset))
+            signal[label][i] = np.frombuffer(rest, dtype=dt, count=num_samples, offset=offset)
             offset += num_samples * 2
+
+    for label in header['labels']:
+        num_samples = header['num_samples'][label]
+        signal[label] = signal[label].reshape(num_samples * num_records)
 
     return signal
