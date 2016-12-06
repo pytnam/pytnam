@@ -3,6 +3,8 @@
 # (https://github.com/pytnam/pytnam) and is licensed under GNU GPL.
 
 from collections import defaultdict
+from io import FileIO
+import numpy as np
 
 
 def read_edf(path):
@@ -54,74 +56,70 @@ def read_edf(path):
     """
 
     data_file = open(path, 'rb')
-    data = data_file.read()
-    position, header = read_header(data)
+    header = read_header(data_file)
     header['frequency'] = defaultdict(float)
     for label in header['labels']:
         header['frequency'][label] = header['num_samples'][label]/header['record_duration']
-    position, signal = read_signal(data, position, header)
+    signal = read_signal(data_file, header)
+    data_file.close()
     return header, signal
 
 
-def read_header(data):
+def read_header(data_file: FileIO):
 
-    def read_n_bytes(data, pos, n, method):
-        return method(data[pos : pos + n].strip().decode('ascii'))
+    def read_n_bytes(df: FileIO, n, method):
+        return method(df.read(n).strip().decode('ascii'))
 
-    def static_header(data, header):
+    def static_header(df: FileIO, hdr):
 
         header_keys_static = [('version', 8, str), ('patient_id', 80, str), ('rec_id', 80, str), ('startdate', 8, str),
                        ('starttime', 8, str), ('header_bytes', 8, int), ('reserved_general', 44, str),
                        ('num_records', 8, int), ('record_duration', 8, float), ('ns', 4, int)]
-        pos = 0
-
         # this part of code reads the part of the header with the general information about the record
         for key, n, method in header_keys_static:
-            header[key] = read_n_bytes(data, pos, n, method)
-            pos += n
+            hdr[key] = read_n_bytes(df, n, method)
+        return hdr
 
-        return header
-
-    def dynamic_header(data, header):
+    def dynamic_header(df: FileIO, hdr):
 
         # this part reads the part of the header with the information about each signal
-        ns = header['ns']
-        pos = 256
+        ns = hdr['ns']
 
-        header['labels'] = []
+        hdr['labels'] = []
         for i in range(ns):
-            header['labels'].append(data[pos:pos+16].strip().decode('ascii'))
-            pos += 16
+            hdr['labels'].append(df.read(16).strip().decode('ascii'))
 
         header_keys_dynamic = [('transducer', 80, str), ('physical_dim', 8, str), ('physical_min', 8, float),
                        ('physical_max', 8, float), ('digital_min', 8, float), ('digital_max', 8, float),
                        ('prefiltering', 80, str), ('num_samples', 8, int), ('reserved_signal', 32, str)]
 
         for key, n, method in header_keys_dynamic:
-            header[key] = defaultdict(method)
-            for label in header['labels']:
-                header[key][label] = read_n_bytes(data, pos, n, method)
-                pos += n
+            hdr[key] = defaultdict(method)
+            for label in hdr['labels']:
+                hdr[key][label] = read_n_bytes(df, n, method)
 
-        return pos, header
+        return hdr
 
     header = defaultdict(lambda: None)
-    header = static_header(data, header)
-    pos, header = dynamic_header(data, header)    
+    header = static_header(data_file, header)
+    header = dynamic_header(data_file, header)
 
-    return pos, header
+    return header
 
 
-def read_signal(data, pos, header):
+def read_signal(data_file: FileIO, header):
 
     signal = defaultdict(list)
     num_records = header['num_records']
+    rest = bytes(data_file.read())
+    offset = 0
+    dt = np.dtype(np.int16)
+    dt = dt.newbyteorder('<')
 
     for i in range(num_records):
         for label in header['labels']:
             num_samples = header['num_samples'][label]
-            for i in range(num_samples):
-                signal[label].append(int.from_bytes([data[pos], data[pos+1]], byteorder='little', signed=True))
-                pos += 2
+            signal[label].extend(np.frombuffer(rest, dtype=dt, count=num_samples, offset=offset))
+            offset += num_samples * 2
 
-    return pos, signal 
+    return signal

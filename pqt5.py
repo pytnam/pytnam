@@ -9,6 +9,7 @@ from PyQt5.QtCore import *
 from input_interface.edf_reader import *
 from input_interface.importer import *
 import random
+import traceback
 
 
 flag1 = 0
@@ -88,7 +89,7 @@ class MainWindow(QMainWindow):      # class MainWindow inherits QMainWindow (cla
 
 
 
-    def viewPlotMethod(self, Array):
+    def viewPlotMethod(self, data):
         plotDockWidget = QDockWidget("Plot", self)
         PlotLWidget = pg.GraphicsLayoutWidget()                                #pyqtgraph class for making widget-ready plots
         #PlotLWidget.useOpenGL(True) sucks
@@ -97,13 +98,14 @@ class MainWindow(QMainWindow):      # class MainWindow inherits QMainWindow (cla
         #PlotLWidget.nextRow = super().newNextRow
         pen_list = ["r", "g", "c", "m", "y", "k", "w"]
         x = 0                                                           #only 10 lines now
-        coeff = 0
-        for keys, values in Array.items():
-            if "EEG" in keys and x < 10:
-                curve1 = pg.PlotCurveItem(values[1]+coeff,pen=random.choice(pen_list)) # (connect = all)
-                asd.addItem(curve1)
-                x = x + 1
-                coeff = coeff + 2000
+        for key in sorted(data.keys()):
+            if key == "info":
+                continue
+            if x >= 10:
+                break
+            curve1 = pg.PlotCurveItem(data[key][1], pen=[random.randint(0, 256), random.randint(0, 256), random.randint(0, 256), 255])  # (connect = all)
+            asd.addItem(curve1)
+            x += 1
         #plotObject.plot(values[1])
         #asd.showAxis('bottom')
         plotDockWidget.setWidget(PlotLWidget)                        #making PlotWidget object set as QDockWidget
@@ -136,24 +138,26 @@ class MainWindow(QMainWindow):      # class MainWindow inherits QMainWindow (cla
     #########################
 
     def showDialog(self):                                           # returns path to the single file selected in dialog
-        fileDialog = QFileDialog(self)
-        fileDialog.setNameFilter("*.edf")
-        fileDialog.setDirectory("\home")
-        if fileDialog.exec():                                             # alternative is QWidget::show(), which doesn't block app flow (user can interact with fileName parent)
-            file_path = fileDialog.selectedFiles()                             # right now only one file can be selected
-            print(file_path)
-        #return(file_path)
-            header, signal = read_edf(file_path[0])
-            global data                                                 # i cant reference to connect(slot) when assigning variable.. temporary workaround now
-            data = importer(header, signal)
-            self.viewPlotMethod(data)
-            #self.data_loaded.emit()
-        #np.set_printoptions(threshold=np.nan)
-        #for keys,values in data.items():
-        #    if keys == "EEG A1" or keys == "EEG A2":
-        #        self.viewPlotMethod(values[1])
-
-                                                                    # exec() deletes memory references after the window is closed
+        try:
+            fileDialog = QFileDialog(self)
+            fileDialog.setNameFilter("*.edf")
+            fileDialog.setDirectory("\home")
+            if fileDialog.exec():                                             # alternative is QWidget::show(), which doesn't block app flow (user can interact with fileName parent)
+                file_path = fileDialog.selectedFiles()                             # right now only one file can be selected
+                print(file_path)
+            #return(file_path)
+                header, signal = read_edf(file_path[0])
+                global data                                                 # i cant reference to connect(slot) when assigning variable.. temporary workaround now
+                data = importer(header, signal)
+                self.viewPlotMethod(data)
+                #self.data_loaded.emit()
+            #np.set_printoptions(threshold=np.nan)
+            #for keys,values in data.items():
+            #    if keys == "EEG A1" or keys == "EEG A2":
+            #        self.viewPlotMethod(values[1])
+        except:
+            traceback.print_exc()
+            # exec() deletes memory references after the window is closed
                                                                     # show() let Qt preserve pointers and memory for that window (so it can be accessed multiple times or faster)
                                                                     # http://bitesofcode.blogspot.com/2011/10/show-vs-execute.html (PyQt4)
 
