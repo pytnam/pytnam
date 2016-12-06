@@ -106,7 +106,7 @@ def read_header(data_file: FileIO):
     return header
 
 
-def read_signal(data_file, header):
+def read_signal(data_file: FileIO, header):
 
     signal = defaultdict(list)
     num_records = header['num_records']
