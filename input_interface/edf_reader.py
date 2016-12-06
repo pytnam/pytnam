@@ -110,7 +110,6 @@ def read_signal(data_file: FileIO, header):
 
     signal = defaultdict(list)
     num_records = header['num_records']
-    data_file.seek(header['header_bytes'])
     rest = bytes(data_file.read())
     offset = 0
     dt = np.dtype(np.int16)
@@ -119,9 +118,7 @@ def read_signal(data_file: FileIO, header):
     for i in range(num_records):
         for label in header['labels']:
             num_samples = header['num_samples'][label]
-            signal[label].append(np.frombuffer(rest, dtype=dt, count=num_samples, offset=offset)[0])
-            # np.frombuffer returns pair: (data, dtype), so [0] extracts data
+            signal[label].extend(np.frombuffer(rest, dtype=dt, count=num_samples, offset=offset))
             offset += num_samples * 2
 
     return signal
-
