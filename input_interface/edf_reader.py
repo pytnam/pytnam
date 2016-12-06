@@ -120,6 +120,7 @@ def read_signal(data_file, header):
         for label in header['labels']:
             num_samples = header['num_samples'][label]
             signal[label].append(np.frombuffer(rest, dtype=dt, count=num_samples, offset=offset)[0])
+            # np.frombuffer returns pair: (data, dtype), so [0] extracts data
             offset += num_samples * 2
 
     return signal
