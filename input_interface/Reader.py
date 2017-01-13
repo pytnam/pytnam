@@ -16,9 +16,9 @@ class Reader:
             if re.match(".*\.edf$", path):
                 self.data = self.read_edf(path)
             else:
-                raise Exception(path)
+                raise Exception(re.search(".*(\..*$)", path).group(1))
         except Exception as e:
-            print("File indicated by given path ("+e.args+") is of an unsupported format.")
+            print(e.args+" is an unsupported file format.")
 
     def read_edf(self, path):
 
