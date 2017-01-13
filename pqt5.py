@@ -20,6 +20,7 @@ class MainWindow(QMainWindow):      # class MainWindow inherits QMainWindow (cla
                                     # 'self' name goes by convention.
         super().__init__()          # super() returns parent object of the MainWindow class (here: QMainWindow) and then it's constructor is called
         self.setObjectName("MainWindowCSS")                       # setting instance (parent) name for CSS styling purposes
+        
     def createUI(self):
 
         settingStyle = " QWidget#MainWindowCSS { background-image:url(./" + Const.BCKG_IMG_STRING + "); " \
@@ -98,14 +99,16 @@ class MainWindow(QMainWindow):      # class MainWindow inherits QMainWindow (cla
         #PlotLWidget.nextRow = super().newNextRow
         pen_list = ["r", "g", "c", "m", "y", "k", "w"]
         x = 0                                                           #only 10 lines now
+        coeff = 0
         for key in sorted(data.keys()):
             if key == "info":
                 continue
             if x >= 10:
                 break
-            curve1 = pg.PlotCurveItem(data[key][1], pen=[random.randint(0, 256), random.randint(0, 256), random.randint(0, 256), 255])  # (connect = all)
+            curve1 = pg.PlotCurveItem(data[key][1]+coeff, pen=[random.randint(0, 256), random.randint(0, 256), random.randint(0, 256), 255])  # (connect = all)
             asd.addItem(curve1)
             x += 1
+            coeff += 3000
         #plotObject.plot(values[1])
         #asd.showAxis('bottom')
         plotDockWidget.setWidget(PlotLWidget)                        #making PlotWidget object set as QDockWidget
@@ -189,6 +192,8 @@ screen_height = mainthread.desktop().screenGeometry().height()
 mw.setGeometry(screen_width/20, screen_height/20, screen_width/1.1, screen_height/1.1)      #i will rewrite this
 mw.show()                                      # show the widget and its children
 sys.exit(mainthread.exec())                    # Enters the main event loop and waits until exit() is called, then returns the value that was passed to exit()
+
+#TEST TEST TEST TEST TEST
 
             # sys.exit([arg]). exit from python interpreter by raising SystemExit exception.
             # integer x as an arg gives specific exit code to the parent process (e.g. shell)
