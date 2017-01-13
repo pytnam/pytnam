@@ -11,6 +11,7 @@ from input_interface.importer import *
 import random
 import traceback
 
+from input_interface.ImportedData import ImportedData
 
 flag1 = 0
 
@@ -149,9 +150,10 @@ class MainWindow(QMainWindow):      # class MainWindow inherits QMainWindow (cla
                 file_path = fileDialog.selectedFiles()                             # right now only one file can be selected
                 print(file_path)
             #return(file_path)
-                header, signal = read_edf(file_path[0])
+                #header, signal = read_edf(file_path[0])
                 global data                                                 # i cant reference to connect(slot) when assigning variable.. temporary workaround now
-                data = importer(header, signal)
+                data = ImportedData(file_path[0]).data
+                #^ this should at some point look like this: data = ImportedData(file_path) and data should be referenced with the object methods get_data() and get_info(), temporary workaround for now
                 self.viewPlotMethod(data)
                 #self.data_loaded.emit()
             #np.set_printoptions(threshold=np.nan)
