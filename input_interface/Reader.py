@@ -7,6 +7,7 @@ from collections import defaultdict
 from io import FileIO
 import numpy as np
 
+
 class Reader:
 
     """This class reads data from the files in a native format (for each data type)."""
@@ -60,7 +61,7 @@ class Reader:
                         field of 32 characters;
                     frequency (dictionary - string: float): key: label (an element of labels), value: frequency of the signal;
 
-            signal (defaultdict(list)): a dictionary of the following format: key: label, value: list of samples;
+            signal (defaultdict(np.array)): a dictionary of the following format: key: label, value: list of samples;
 
                 NOTE: this version ignores the differences between edf and edf+, what makes her more suitable for edf,
                 rather than edf+ files
@@ -106,7 +107,7 @@ class Reader:
 
             header = defaultdict(lambda: None)
             header = static_header(data_file, header)
-            header = dynamic_header(data_file, header)
+            header = dynamic_header(data_file, header) #don't I overwrite hear the command from line above?
 
             return header
 
@@ -131,8 +132,13 @@ class Reader:
 
             for label in header['labels']:
                 num_samples = header['num_samples'][label]
-                signal[label] = signal[label].reshape(num_samples * num_records)
+                signal[label] = scale(header['physical_max'][label], header['digital_max'][label],
+                                      np.array(signal[label].reshape(num_samples * num_records)))
 
+            return signal
+
+        def scale(physical_max, digital_max, signal): #note: this function will increase the computational complexity of Reader
+            signal *= physical_max / digital_max
             return signal
 
         data_file = open(path, 'rb')
@@ -143,5 +149,7 @@ class Reader:
         signal = read_signal(data_file, header)
         data_file.close()
         return header, signal
+
+
 
 

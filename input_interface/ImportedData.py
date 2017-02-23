@@ -35,19 +35,21 @@ class ImportedData:
                 key 'info', value dictionary with following keys:
                     patient_id (string): local patient id
                     frequencies (dictionary - string: float): key: label (an element of labels), value: frequency of the signal;
-                    stardate (string): startdate of the recording (dd.mm.yy) (for more info see edf and edf+ specs at: http://www.edfplus.info/specs/index.html)
+                    startdate (string): startdate of the recording (dd.mm.yy) (for more info see edf and edf+ specs at: http://www.edfplus.info/specs/index.html)
                     starttime (string): starttime of the recording (hh.mm.ss)
                     physical_dim (dictionary - string: string): key: label (an element of labels), value: physical dimension;
                     prefiltering (dictionary - string: string): key: label (an element of labels), value: signal's prefiltering;
 
-        TODO: discuss whether the proposed format is okay (meaning the format of the signal) - it lets us have different frequencies in different signals; discuss whether the 'info' section has enough data
+        TODO: discuss whether the proposed format is okay (meaning the format of the signal) -
+        it lets us have different frequencies in different signals; discuss whether the 'info' section has enough data ->
+        it probably doesn't since I omitted the physical_max and digital_max, so the data on the
         """
         data = defaultdict(lambda: (np.array, np.array))
 
         for label in sorted(signal.keys()):
             freq = header['frequency'][label]
             time = [(0 + (x/freq)) for x in range(header['num_records']*header['num_samples'][label])]
-            data["signal"][label] = (np.array(time), signal[label])
+            data["signal"][label] = (np.array(np.array(time), signal[label]))
 
         data['info'] = defaultdict(lambda: None)
 
@@ -59,3 +61,4 @@ class ImportedData:
         data['info']['prefiltering'] = header['prefiltering']
 
         return data
+
