@@ -39,6 +39,7 @@ class ImportedData:
                     starttime (string): starttime of the recording (hh.mm.ss)
                     physical_dim (dictionary - string: string): key: label (an element of labels), value: physical dimension;
                     prefiltering (dictionary - string: string): key: label (an element of labels), value: signal's prefiltering;
+                    events (list of arrays): list of events; each event is represented as an array of times of marker's occurrence
 
         TODO: discuss whether the proposed format is okay (meaning the format of the signal) -
         it lets us have different frequencies in different signals; discuss whether the 'info' section has enough data ->
@@ -60,5 +61,27 @@ class ImportedData:
         data['info']['physical_dim'] = header['physical_dim']
         data['info']['prefiltering'] = header['prefiltering']
 
+        data['info']['events'] = []
+        # not sure if this is a good enough way to represent events -
+        # maybe it should be a dictionnary with some info about the event as key? and an array (of time stamps) as value
+
         return data
 
+    def get_event_from_event_channel(self, channel_name, threshold):
+        # do we want to have some meta data about the event? what was it, e.g. how loud was the sound, etc.
+        # what other types of event extraction do we want?
+
+        """
+        This function extracts information about an event from a given channel (@channel_name) in the simplest way -
+        it treats as an event marker a value of signal that is higher than a given value (@threshold).
+        This function is best when in the data there is a channel that has only non-zero values when the event occurs
+        (an event channel).
+        """
+
+        markers = []
+        for x in range(self.data['signal'][channel_name].shape()[1]):
+            time, value = self.data['signal'][channel_name][...,x]
+            if value >= threshold: # ">=" was an arbitrary decision
+                markers.append(time)
+
+        self.data['info']['events'].append(np.array(markers))
