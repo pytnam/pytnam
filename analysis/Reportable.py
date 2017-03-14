@@ -10,10 +10,11 @@ the objects provide analysis routines as a (hopefully) consistent API.
 Every analysis object performs data serialization before the analysis, so as to make sure everything can be easily
 recovered in case of any processing failure or an unnoticed mistake in parameters.
 """
+from abc import ABC, abstractmethod
 import pickle
 
 
-class Reportable:
+class Reportable(ABC):
     """
     Variables storing the processing feature's important parameters:
     data - the data for the analysis;
@@ -28,8 +29,8 @@ class Reportable:
     backup_address = None
     temporary = None
 
-    @staticmethod
-    def get_representation():
+    @abstractmethod
+    def get_representation(self):
         """
         This method is used by the reporting module.
         It should always return a list of arbitrary length, containing only strings and numbers representing
