@@ -6,12 +6,11 @@ import Const        # file for keeping const variables
 from PyQt5.QtWidgets import QListWidget, QDockWidget, QLabel, QGridLayout, QApplication, QVBoxLayout, QLayout, QWidget, QPushButton, QMessageBox, QMainWindow, QGraphicsOpacityEffect, QAction, qApp, QFileDialog, QGroupBox
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-from input_interface.edf_reader import *
-from input_interface.importer import *
 import random
 import traceback
 
 from input_interface.ImportedData import ImportedData
+from input_interface.Reader import Reader
 
 flag1 = 0
 
