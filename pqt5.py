@@ -100,12 +100,12 @@ class MainWindow(QMainWindow):      # class MainWindow inherits QMainWindow (cla
         pen_list = ["r", "g", "c", "m", "y", "k", "w"]
         x = 0                                                           #only 10 lines now
         coeff = 0
-        for key in sorted(data.keys()):
-            if key == "info":
-                continue
+        for key in sorted(data["signal"].keys()):
+            # if key == "info":
+            #     continue
             if x >= 10:
                 break
-            curve1 = pg.PlotCurveItem(data[key][1]+coeff, pen=[random.randint(0, 256), random.randint(0, 256), random.randint(0, 256), 255])  # (connect = all)
+            curve1 = pg.PlotCurveItem(data["signal"][key][1]+coeff, pen=[random.randint(0, 256), random.randint(0, 256), random.randint(0, 256), 255])  # (connect = all)
             asd.addItem(curve1)
             x += 1
             coeff += 3000
