@@ -1,16 +1,18 @@
-from numpy import *
-import pyqtgraph as pg
-import sys
-import os
-import Const        # file for keeping const variables
-from PyQt5.QtWidgets import QListWidget, QDockWidget, QLabel, QGridLayout, QApplication, QVBoxLayout, QLayout, QWidget, QPushButton, QMessageBox, QMainWindow, QGraphicsOpacityEffect, QAction, qApp, QFileDialog, QGroupBox
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
 import random
+import sys
 import traceback
 
-from input_interface.ImportedData import ImportedData
-from input_interface.Reader import Reader
+import pyqtgraph as pg
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QDockWidget, QApplication, QMessageBox, QMainWindow, QGraphicsOpacityEffect, QAction, \
+    QFileDialog
+from numpy import *
+
+import Const  # file for keeping const variables
+from eeg_data.input_interface.ImportedData import ImportedData
+
+# from input_interface.Reader import Reader
 
 flag1 = 0
 
