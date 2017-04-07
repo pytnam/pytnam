@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-# This module was created by Wiktor Rorot <wiktor.rorot@gmail.com> as a part of pytnam project (https://github.com/pytnam/pytnam) and is licensed under GNU GPL.
+# This module was created by Wiktor Rorot <wiktor.rorot@gmail.com> as a part of pytnam project
+# (https://github.com/pytnam/pytnam) and is licensed under GNU GPL.
 
 import numpy as np
 from collections import defaultdict
@@ -11,7 +12,8 @@ class ImportedData:
     """Objects of this class hold the imported data."""
 
     def __init__(self, path):
-        header, signal = input_interface.Reader(path).data
+        data = input_interface.Reader.Reader(path)
+        header, signal = data.data
         self.data = self.__importer(header, signal)
 
     def get_signal(self):
@@ -31,26 +33,34 @@ class ImportedData:
         RETURNS:
             data (defaultdict((np.array, np.array))): a dictionary where:
                 key 'signal', value dictionary with following format:
-                    key: label, value: tuple of which 1st element is numpy.array of timestamps, and 2nd element  is numpy.array of sample values at those timestamps
+                    key: label, value: tuple of which 1st element is numpy.array of timestamps, and 2nd element  is 
+                    numpy.array of sample values at those timestamps
                 key 'info', value dictionary with following keys:
                     patient_id (string): local patient id
-                    frequencies (dictionary - string: float): key: label (an element of labels), value: frequency of the signal;
-                    startdate (string): startdate of the recording (dd.mm.yy) (for more info see edf and edf+ specs at: http://www.edfplus.info/specs/index.html)
+                    frequencies (dictionary - string: float): key: label (an element of labels), value: frequency of the
+                    signal;
+                    startdate (string): startdate of the recording (dd.mm.yy) (for more info see edf and edf+ specs at: 
+                    http://www.edfplus.info/specs/index.html)
                     starttime (string): starttime of the recording (hh.mm.ss)
-                    physical_dim (dictionary - string: string): key: label (an element of labels), value: physical dimension;
-                    prefiltering (dictionary - string: string): key: label (an element of labels), value: signal's prefiltering;
-                    events (list of arrays): list of events; each event is represented as an array of times of marker's occurrence
+                    physical_dim (dictionary - string: string): key: label (an element of labels), value: physical 
+                    dimension;
+                    prefiltering (dictionary - string: string): key: label (an element of labels), value: signal's 
+                    prefiltering;
+                    events (list of arrays): list of events; each event is represented as an array of times of marker's 
+                    occurrence
 
         TODO: discuss whether the proposed format is okay (meaning the format of the signal) -
-        it lets us have different frequencies in different signals; discuss whether the 'info' section has enough data ->
-        it probably doesn't since I omitted the physical_max and digital_max, so the data on the
+        it lets us have different frequencies in different signals; discuss whether the 'info' section has enough data 
+        -> it probably doesn't since I omitted the physical_max and digital_max, so the data on the
         """
-        data = defaultdict(lambda: (np.array, np.array))
+
+        data = defaultdict(lambda: defaultdict(lambda: None))
 
         for label in sorted(signal.keys()):
             freq = header['frequency'][label]
-            time = [(0 + (x/freq)) for x in range(header['num_records']*header['num_samples'][label])]
-            data["signal"][label] = (np.array(np.array(time), signal[label]))
+            time = [(0 + ((x/freq)*1000)) for x in range(header['num_records']*header['num_samples'][label])]
+            data["signal"][label] = np.array([np.array(time), np.array(signal[label])])
+
 
         data['info'] = defaultdict(lambda: None)
 
@@ -67,7 +77,7 @@ class ImportedData:
 
         return data
 
-    def get_event_from_event_channel(self, channel_name, threshold):
+    def get_event_from_event_channel(self, channel_name, threshold=1000):
         # do we want to have some meta data about the event? what was it, e.g. how loud was the sound, etc.
         # what other types of event extraction do we want?
 
@@ -80,8 +90,8 @@ class ImportedData:
 
         markers = []
         for x in range(self.data['signal'][channel_name].shape()[1]):
-            time, value = self.data['signal'][channel_name][...,x]
-            if value >= threshold: # ">=" was an arbitrary decision
+            time, value = self.data['signal'][channel_name][..., x]
+            if value >= threshold:  # ">=" was an arbitrary decision
                 markers.append(time)
 
         self.data['info']['events'].append(np.array(markers))

@@ -13,13 +13,14 @@ class Reader:
     """This class reads data from the files in a native format (for each data type)."""
 
     def __init__(self, path):
-        try:
-            if re.match(".*\.edf$", path):
-                self.data = self.read_edf(path)
-            else:
-                raise Exception(re.search(".*(\..*$)", path).group(1))
-        except Exception as e:
-            print(e.args+" is an unsupported file format.")
+        self.data = self.read_edf(path)
+        # try:
+        #     if re.match(".*\.edf$", path):
+        #         self.data = self.read_edf(path)
+        #     else:
+        #         raise Exception(re.search(".*(\..*$)", path).group(1))
+        # except Exception as e:
+        #     print(e.args+" is an unsupported file format.")
 
     def read_edf(self, path):
 
@@ -137,7 +138,8 @@ class Reader:
 
             return signal
 
-        def scale(physical_max, digital_max, signal): #note: this function will increase the computational complexity of Reader
+        # note: this function will increase the computational complexity of Reader
+        def scale(physical_max, digital_max, signal):
             signal *= physical_max / digital_max
             return signal
 
