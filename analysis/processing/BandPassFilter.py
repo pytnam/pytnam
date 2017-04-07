@@ -8,6 +8,8 @@ from analysis.Reportable import Reportable
 
 
 class BandPassFilter(Reportable):
+    start_time =
+
     def __init__(self, data, channels, method="Butterworth filter"):
         """
         :type data: ImportedData
@@ -17,3 +19,12 @@ class BandPassFilter(Reportable):
         self.data = data
         self.channels = channels
         self.method = method
+        self.parameters.append(method)
+
+    def get_representation(self):
+        #TODO
+        pass
+
+    def bandpass(self):
+
+        pass

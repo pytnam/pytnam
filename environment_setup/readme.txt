@@ -1,5 +1,5 @@
-environment.yml is anaconda env config file
-to use this you need to:
+environment.yml is an Anaconda env config file.
+To use this, you need to:
 
 > conda env create -f environment.yml
 Activate the new environment:

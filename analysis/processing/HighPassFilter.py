@@ -6,5 +6,8 @@ from analysis.Reportable import Reportable
 
 
 class HighPassFilter(Reportable):
-    pass
+
+    def get_representation(self):
+        pass
+
 #TODO
