@@ -1,25 +1,25 @@
 name: pytnam
 channels: !!python/tuple
+- anaconda
+- conda-forge
 - defaults
 dependencies:
-- icu=58.1=vc14_0
-- jpeg=8d=vc14_2
-- libpng=1.6.22=vc14_0
-- mkl=11.3.3=1
+- icu
+- jpeg
+- libpng
+- mkl
 - numpy=1.11.2=py35_0
-- openssl=1.0.2j=vc14_0
-- pip=9.0.1=py35_0
-- pyqt=5.6.0=py35_0
-- python=3.5.2=0
-- qt=5.6.0=vc14_0
+- openssl
+- pip
+- pyqt=5.6.0
+- python=3.5.2
+- qt=5.6.0
 - scipy=0.18.*
-- setuptools=27.2.0=py35_1
-- sip=4.18=py35_0
+- setuptools
+- sip=4.18
 - scikit-learn=0.18.*
-- vs2015_runtime=14.0.25123=0
-- wheel=0.29.0=py35_0
-- zlib=1.2.8=vc14_3
-- pip:
-  - pyqtgraph==0.10.0
-prefix: C:\just-test
-
+- pyqtgraph=0.10.0
+#- vs2015_runtime
+- wheel
+- zlib
+prefix: C:\PytnamE
