@@ -2,7 +2,7 @@ name: pytnam
 channels: !!python/tuple
 - defaults
 dependencies:
-- icu=57.1=vc14_0
+- icu=58.1=vc14_0
 - jpeg=8d=vc14_2
 - libpng=1.6.22=vc14_0
 - mkl=11.3.3=1
