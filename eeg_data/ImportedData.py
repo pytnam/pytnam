@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-# This module was created by Wiktor Rorot <wiktor.rorot@gmail.com> as a part of pytnam project
-# (https://github.com/pytnam/pytnam) and is licensed under GNU GPL.
 
 from collections import defaultdict
-import eeg_data
+from eeg_data.input_interface.Reader import Reader
 import numpy as np
 
 
@@ -12,15 +10,9 @@ class ImportedData:
     """Objects of this class hold the imported data."""
 
     def __init__(self, path):
-        data = eeg_data.input_interface.Reader.Reader(path)
+        data = Reader(path)
         header, signal = data.data
         self.data = self.__importer(header, signal)
-
-    def get_signal(self):
-        return self.data["signal"]
-
-    def get_info(self):
-        return self.data["info"]
 
     @staticmethod
     def __importer(header, signal):
@@ -58,7 +50,7 @@ class ImportedData:
 
         for label in sorted(signal.keys()):
             freq = header['frequency'][label]
-            time = [(x/freq) for x in range(header['num_records']*header['num_samples'][label])] # should be in milliseconds now
+            time = [(x*1000/freq) for x in range(header['num_records']*header['num_samples'][label])] # should be in milliseconds now
             data["signal"][label] = np.array([np.array(time), np.array(signal[label])])
 
         data['info'] = defaultdict(lambda: None)
@@ -72,7 +64,7 @@ class ImportedData:
 
         data['info']['events'] = []
         # not sure if this is a good enough way to represent events -
-        # maybe it should be a dictionnary with some info about the event as key? and an array (of time stamps) as value
+        # maybe it should be a dictionary with some info about the event as key? and an array (of time stamps) as value
 
         return data
 
@@ -94,3 +86,6 @@ class ImportedData:
                 markers.append(time)
 
         self.data['info']['events'].append(np.array(markers))
+
+    def remove_channel(self, channel_name):
+        del self.data["signal"][channel_name]

@@ -1,6 +1,7 @@
 import random
-import sys
 import traceback
+
+import sys
 
 import pyqtgraph as pg
 from PyQt5.QtCore import *
@@ -10,7 +11,7 @@ from PyQt5.QtWidgets import QDockWidget, QApplication, QMessageBox, QMainWindow,
 from numpy import *
 
 import Const  # file for keeping const variables
-from eeg_data.input_interface.ImportedData import ImportedData
+from eeg_data.ImportedData import ImportedData
 
 # from input_interface.Reader import Reader
 

@@ -22,7 +22,8 @@ class Reader:
         # except Exception as e:
         #     print(e.args+" is an unsupported file format.")
 
-    def read_edf(self, path):
+    @staticmethod
+    def read_edf(path):
 
         """
         The function edf_reader serves to read .edf files.
