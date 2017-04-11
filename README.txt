@@ -41,5 +41,6 @@ Windows:
 Verify that the new environment was installed correctly:
 >conda list
 
+
 Tutorial for setting conda env in your IDE:
 https://docs.continuum.io/anaconda/ide_integration
