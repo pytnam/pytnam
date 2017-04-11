@@ -22,5 +22,4 @@ dependencies:
 #- vs2015_runtime
 - wheel
 - zlib
-prefix: C:\PytnamEnv
-
+prefix: C:\PytnamE
