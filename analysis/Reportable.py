@@ -24,8 +24,10 @@ class Reportable(ABC):
     backup_addres - a variable used by the backup/restore functions;
     temporary - another variable for backup (please see the code of the _backup function).
     """
-    name = ''
+    method_name = ""
     parameters = []
+    start_time = ""
+    end_time = ""
     backup_address = None
     temporary = None
 
@@ -33,12 +35,17 @@ class Reportable(ABC):
     def get_representation(self):
         """
         This method is used by the reporting module.
-        It should always return a list of arbitrary length, containing only strings and numbers representing
-        parameters of the performed analysis.
+        It should always return a list of arbitrary length, containing only strings representing
+        significant features & parameters of the performed analysis as follows:
+        representation[0] = startTime: String
+        representation[1] = endTime: String
+        representation[2] = method_name: String
+        representation[3, ...] = parameters: list[String]
         """
+        representation = [self.start_time] + [self.end_time] + self.parameters
         pass
 
-    def _backup(self, to_file=False, filename=''):
+    def _backup(self, filename, to_file=False):
         """
         This method is designed for saving a copy of the signal before performing analysis.
         It uses pickle module for serialization; the serialized byte stream can be saved to file
@@ -47,7 +54,7 @@ class Reportable(ABC):
         :param filename: String
         """
         if to_file:
-            f = open(filename, 'b')
+            f = open(filename, "b")
             pickle.dump(self.data, f, pickle.HIGHEST_PROTOCOL)
             f.close()
             self.backup_address = filename
@@ -62,6 +69,6 @@ class Reportable(ABC):
         if self.backup_address is None:
             self.data = pickle.loads(self.temporary)
         else:
-            source = open(self.backup_address, 'b')
+            source = open(self.backup_address, "b")
             self.data = pickle.load(source)
             source.close()
