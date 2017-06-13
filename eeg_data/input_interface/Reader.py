@@ -9,9 +9,13 @@ import numpy as np
 
 
 class Reader:
-
-    """This class reads data from the files in a native format (for each data type)."""
-
+    """
+    Reads data from the files in a native format that requires further processing to be readable for pytnam. 
+    
+    
+    read_edf -- reads the EEG data from an EDF file.
+    Currently supports only the EDF format.
+    """
     def __init__(self, path):
         self.data = self.read_edf(path)
         # try:
@@ -28,25 +32,24 @@ class Reader:
         """
         The function edf_reader serves to read .edf files.
 
-        ARGUMENTS:
-            path (string): a path to the .edf file
+        :argument path: string, a path to the .edf file
 
-        RETURNS:
-
-            header (defaultdict(lambda: None)): a dictionary containing general information about the recording,
-            from the .edf file's header.
+        :returns
+            :return header: defaultdict(lambda: None), a dictionary containing general information about the recording,
+                from the .edf file's header.
                 It conveys following information:
                     version (string): version of the .edf data format (always 0)
                     patient_id (string): local patient id
                     rec_id (string): local recording id
-                    stardate (string): startdate of the recording (dd.mm.yy) (for more info see edf and edf+ specs at:
+                    stardate (string): startdate of the recording (dd.mm.yy) (for more info see EDF and EDF+ specs at:
                         http://www.edfplus.info/specs/index.html)
                     starttime (string): starttime of the recording (hh.mm.ss)
                     header_bytes (integer): size of the header (in bytes)
-                    reserved_general (string): reserved field of 44 characters; since introduction of edf+ it conveys the
-                        information about the continuity of the record (see edf+ specs)
-                    num_records (integer): the recording in the edf format is broken into records of not less than 1s and
-                        no more than 61440 bytes (see specs);
+                    reserved_general (string): reserved field of 44 characters; 
+                        since introduction of EDF+ it conveys the information about the continuity of the record 
+                        (see EDF+ specs)
+                    num_records (integer): the recording in the edf format is broken into records of not less than 1 second 
+                        and no more than 61440 bytes (see specs);
                     record_duration (float): duration of one record; usually an integer >= 1;
                     ns (integer): number of signals in the recording (e.g. in EEG - number of channels)
                     labels (list of strings): labels of signals;
@@ -63,7 +66,7 @@ class Reader:
                         field of 32 characters;
                     frequency (dictionary - string: float): key: label (an element of labels), value: frequency of the signal;
 
-            signal (defaultdict(np.array)): a dictionary of the following format: key: label, value: list of samples;
+            :return signal: defaultdict(np.array) -- a dictionary of the following format: key: label, value: list of samples;
 
                 NOTE: this version ignores the differences between edf and edf+, what makes her more suitable for edf,
                 rather than edf+ files
@@ -72,6 +75,7 @@ class Reader:
         """
 
         def read_header(data_file: FileIO):
+            """Reads EDF file header."""
 
             def read_n_bytes(df: FileIO, n, method):
                 return method(df.read(n).strip().decode('ascii'))
@@ -107,13 +111,14 @@ class Reader:
 
                 return hdr
 
-            header = defaultdict(lambda: None)
-            header = static_header(data_file, header)
-            header = dynamic_header(data_file, header) #don't I overwrite hear the command from line above?
+            header = dynamic_header(data_file, static_header(data_file, defaultdict(lambda: None)))
+            # header = static_header(data_file, header)
+            # header = dynamic_header(data_file, header)
 
             return header
 
         def read_signal(data_file: FileIO, header):
+            """Reads EEG signal from the EDF file."""
 
             signal = {}
             num_records = header['num_records']
@@ -141,6 +146,7 @@ class Reader:
 
         # note: this function will increase the computational complexity of Reader
         def scale(physical_max, digital_max, signal):
+            """Scales the signal from digital (arbitrary) to physical (uV) units."""
             signal *= physical_max / digital_max
             return signal
 

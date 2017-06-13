@@ -6,8 +6,15 @@ import numpy as np
 
 
 class ImportedData:
-
-    """Objects of this class hold the imported data."""
+    """
+    Holds imported (continuous) data.
+    
+    __importer -- transforms data from Reader class into pytnam readable format 
+        (losing some unnecessary properties of the external file along the way).
+    get_event_from_event_channel -- exports the time stamps of events from a dedicated channel. 
+        Appends list of events to the ImportedData object.
+    remove_channel -- removes channel.
+    """
 
     def __init__(self, path):
         data = Reader(path)
@@ -16,14 +23,16 @@ class ImportedData:
 
     @staticmethod
     def __importer(header, signal):
-
         """
         Changes format of data.
 
         Takes as an argument dict representing a header (of e.g. edf file) and dict representing the signal.
 
-        RETURNS:
-            data (defaultdict((np.array, np.array))): a dictionary where:
+        :argument header -- metadata about the EEG signal. From Reader class.
+        :argument signal -- EEG signal. From Reader class.
+
+        :returns
+            :return data: defaultdict((np.array, np.array)) -- a dictionary where:
                 key 'signal', value dictionary with following format:
                     key: label, value: tuple of which 1st element is numpy.array of timestamps, and 2nd element  is 
                     numpy.array of sample values at those timestamps
@@ -40,11 +49,11 @@ class ImportedData:
                     prefiltering;
                     events (list of arrays): list of events; each event is represented as an array of times of marker's 
                     occurrence
-
-        TODO: discuss whether the proposed format is okay (meaning the format of the signal) -
-        it lets us have different frequencies in different signals; discuss whether the 'info' section has enough data 
-        -> it probably doesn't since I omitted the physical_max and digital_max, so the data on the
         """
+        # TODO: discuss whether the proposed format is okay (meaning the format of the signal) -
+        # it lets us have different frequencies in different signals; discuss whether the 'info' section has enough data
+        # -> it probably doesn't since I omitted the physical_max and digital_max
+
 
         data = defaultdict(lambda: defaultdict(lambda: None))
 
@@ -69,15 +78,17 @@ class ImportedData:
         return data
 
     def get_event_from_event_channel(self, channel_name, threshold=1000):
+        """
+        Extracts information about an event from a given channel (:argument channel_name).
+         
+        Extracts events in the simplest way -- it treats as an event marker a value of signal that is higher than 
+        a given value (:keyword threshold). 
+        This function works best when in the data there is a channel that has only non-zero values when the event occurs
+        (that is, a dedicated event channel).
+        """
+
         # do we want to have some meta data about the event? what was it, e.g. how loud was the sound, etc.
         # what other types of event extraction do we want?
-
-        """
-        This function extracts information about an event from a given channel (@channel_name) in the simplest way -
-        it treats as an event marker a value of signal that is higher than a given value (@threshold).
-        This function is best when in the data there is a channel that has only non-zero values when the event occurs
-        (an event channel).
-        """
 
         markers = []
         for x in range(self.data['signal'][channel_name].shape()[1]):
@@ -88,4 +99,5 @@ class ImportedData:
         self.data['info']['events'].append(np.array(markers))
 
     def remove_channel(self, channel_name):
+        """Removes channel."""
         del self.data["signal"][channel_name]

@@ -4,10 +4,12 @@ import numpy as np
 
 
 class Epoch:
-
-    """This object is a representation of a single epoch.
-    @data is a dictionary of channels, each channel is a np.array with a time representations to the event,
-    @id is the time of occurrence of event."""
+    """
+    Holds a representation of a single epoch.
+    
+    :ivar data is a dictionary of channels, each channel is a np.array with a time representations to the event,
+    :ivar id is the time of occurrence of event.
+    """
 
     def __init__(self, imported_data, channels, event, start, end):
 

@@ -6,11 +6,11 @@ import numpy as np
 
 
 class DiscreteData:
-
     """
-    This class represents the data after epoch extraction. 
+    Holds discrete data.
+    
     Each object of this class holds epochs extracted basing on exactly one event. 
-    Epochs are kept in a np.array (@epochs) of respective Epoch objects, position in the array responds to the event id.
+    Epochs are kept in a np.array (:var epochs) of respective Epoch objects, position in the array responds to the event id.
     """
 
     def __init__(self, data, event_type_id, start=-1000, end=2000):
@@ -31,8 +31,7 @@ class DiscreteData:
             pass
 
     def average_epochs(self, channels):
-
-        """This method returns an arithmetic average value of brain activation over all epochs."""
+        """Returns an arithmetic average value of brain activation over all epochs."""
 
         averaged = defaultdict(lambda: np.array([[],[]]))
 
