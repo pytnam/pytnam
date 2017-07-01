@@ -3,7 +3,7 @@
 from analysis.Reportable import Reportable
 
 
-class BandPassFilter(Reportable):
+class NotchFilter(Reportable):
     def return_as_node(self):
         pass
 

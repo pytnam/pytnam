@@ -1,13 +1,10 @@
-"""
-Basic high-pass filtering feature.
-"""
-import scipy.signal as signal
+'''Created by rj as part of the Pytnam Project'''
+
 from analysis.Reportable import Reportable
 
 
 class HighPassFilter(Reportable):
-
-    def get_representation(self):
+    def return_as_node(self):
         pass
 
-#TODO
+# TODO

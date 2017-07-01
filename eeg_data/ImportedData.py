@@ -59,7 +59,8 @@ class ImportedData:
 
         for label in sorted(signal.keys()):
             freq = header['frequency'][label]
-            time = [(x*1000/freq) for x in range(header['num_records']*header['num_samples'][label])] # should be in milliseconds now
+            time = [(x * 1000 / freq) for x in
+                    range(header['num_records'] * header['num_samples'][label])]  # should be in milliseconds now
             data["signal"][label] = np.array([np.array(time), np.array(signal[label])])
 
         data['info'] = defaultdict(lambda: None)

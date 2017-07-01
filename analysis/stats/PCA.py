@@ -13,7 +13,7 @@ from analysis.Reportable import Reportable
 
 class PrinComp(Reportable):
 
-    def get_representation(self):
+    def return_as_node(self):
         pass
 
     @staticmethod

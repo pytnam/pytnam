@@ -1,14 +1,21 @@
 """
 This class substitutes a general interface that all analysis and statistics features must obey.
-By convention, every class in the processing or stats package shall inherit after Reportable.
-This allows to ensure that every analysis available in Pytnam integrates with the auto-reporting system.
-No method in this class has a body, for the implementation may differ significantly across the subclasses.
+By convention, every class in the processing or stats package should inherit after Reportable.
+This is to ensure that every analysis available in Pytnam integrates with the auto-reporting system.
 
 The main framework for signal analysis in Pytnam is designed as follows:
 each processing/statistics feature is implemented in its class, thus processing data always involves creating an object;
 the objects provide analysis routines as a (hopefully) consistent API.
-Every analysis object performs data serialization before the analysis, so as to make sure everything can be easily
+Every analysis object can be told to performs data serialization before the analysis, so as to make sure everything can be easily
 recovered in case of any processing failure or an unnoticed mistake in parameters.
+
+The common method for all Reportable analyses is return_as_node(), which returns an XML representation
+of the object. These XML representations are used for automatic writing and reading sequences of Pytnam analyses.
+Such sequences are called Pytnam Pipelines (after the R language pipeline-style analysis scripts).
+Each user session with Pytnam involves creating at least one pipeline.
+Writing pipelines to XML makes it possible to recover any sequence of Pytnam analyses on any computer with Pytnam installed,
+without writing and running any Python scripts. Thus it is a feature aimed mostly at non-programmers,
+who usually make for the majority of EEG processing tolbox users.
 """
 from abc import ABC, abstractmethod
 import pickle
@@ -18,37 +25,30 @@ class Reportable(ABC):
     """
     Variables storing the processing feature's important parameters:
     data - the data for the analysis;
-    name - a string representing the name of the analysis method;
+    analysis_name - a string representing the name of the analysis method;
     parameters - a table containing the analysis' parameters. This may differ for each instance of a given class.
     While implementing, please make sure that ALL the parameters on the list are named.
-    backup_addres - a variable used by the backup/restore functions;
+    backup_address - a variable used by the backup/restore functions;
     temporary - another variable for backup (please see the code of the _backup function).
     """
-    method_name = ""
+    analysis_name = ""
     parameters = []
-    start_time = ""
-    end_time = ""
     backup_address = None
     temporary = None
 
     @abstractmethod
-    def get_representation(self):
+    def return_as_node(self):
         """
         This method is used by the reporting module.
-        It should always return a list of arbitrary length, containing only strings representing
-        significant features & parameters of the performed analysis as follows:
-        representation[0] = startTime: String
-        representation[1] = endTime: String
-        representation[2] = method_name: String
-        representation[3, ...] = parameters: list[String]
+        It should always return an lxml Element object - XML node, usually with children, ready for
+        being processed by a PipelineWriter object.
         """
-        representation = [self.start_time] + [self.end_time] + self.parameters
         pass
 
     def _backup(self, filename, to_file=False):
         """
-        This method is designed for saving a copy of the signal before performing analysis.
-        It uses pickle module for serialization; the serialized byte stream can be saved to file
+        Internal method designed for saving a copy of the signal before performing analysis.
+        Pickle module is used for fast serialization; the serialized byte stream can be saved to file
         or temporarily stored by the Reportable object.
         :param to_file: boolean
         :param filename: String
@@ -63,7 +63,7 @@ class Reportable(ABC):
 
     def _restore(self):
         """
-        Method for restoring the data in case the analysis fails.
+        Internal method for restoring the data in case the analysis fails.
         It presupposes that the data has been backed up using the _backup method, either to file or to object.
         """
         if self.backup_address is None:
