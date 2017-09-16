@@ -1,0 +1,323 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>eeg_data.ImportedData &mdash; Pytnam  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Pytnam  documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Pytnam
+          
+
+          
+            
+            <img src="../../_static/pytnam.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Pytnam</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>eeg_data.ImportedData</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for eeg_data.ImportedData</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">eeg_data.input_interface.Reader</span> <span class="k">import</span> <span class="n">Reader</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="ImportedData"><a class="viewcode-back" href="../../rst/eeg_data.html#eeg_data.ImportedData.ImportedData">[docs]</a><span class="k">class</span> <span class="nc">ImportedData</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Holds imported (continuous) data.</span>
+<span class="sd">    </span>
+<span class="sd">    __importer -- transforms data from Reader class into pytnam readable format </span>
+<span class="sd">        (losing some unnecessary properties of the external file along the way).</span>
+<span class="sd">    get_event_from_event_channel -- exports the time stamps of events from a dedicated channel. </span>
+<span class="sd">        Appends list of events to the ImportedData object.</span>
+<span class="sd">    remove_channel -- removes channel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">Reader</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">header</span><span class="p">,</span> <span class="n">signal</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__importer</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">signal</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__importer</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">signal</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Changes format of data.</span>
+
+<span class="sd">        Takes as an argument dict representing a header (of e.g. edf file) and dict representing the signal.</span>
+
+<span class="sd">        :argument header -- metadata about the EEG signal. From Reader class.</span>
+<span class="sd">        :argument signal -- EEG signal. From Reader class.</span>
+
+<span class="sd">        :returns</span>
+<span class="sd">            :return data: defaultdict((np.array, np.array)) -- a dictionary where:</span>
+<span class="sd">                key &#39;signal&#39;, value dictionary with following format:</span>
+<span class="sd">                    key: label, value: tuple of which 1st element is numpy.array of timestamps, and 2nd element  is </span>
+<span class="sd">                    numpy.array of sample values at those timestamps</span>
+<span class="sd">                key &#39;info&#39;, value dictionary with following keys:</span>
+<span class="sd">                    patient_id (string): local patient id</span>
+<span class="sd">                    frequencies (dictionary - string: float): key: label (an element of labels), value: frequency of the</span>
+<span class="sd">                    signal;</span>
+<span class="sd">                    startdate (string): startdate of the recording (dd.mm.yy) (for more info see edf and edf+ specs at: </span>
+<span class="sd">                    http://www.edfplus.info/specs/index.html)</span>
+<span class="sd">                    starttime (string): starttime of the recording (hh.mm.ss)</span>
+<span class="sd">                    physical_dim (dictionary - string: string): key: label (an element of labels), value: physical </span>
+<span class="sd">                    dimension;</span>
+<span class="sd">                    prefiltering (dictionary - string: string): key: label (an element of labels), value: signal&#39;s </span>
+<span class="sd">                    prefiltering;</span>
+<span class="sd">                    events (list of arrays): list of events; each event is represented as an array of times of marker&#39;s </span>
+<span class="sd">                    occurrence</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: discuss whether the proposed format is okay (meaning the format of the signal) -</span>
+        <span class="c1"># it lets us have different frequencies in different signals; discuss whether the &#39;info&#39; section has enough data</span>
+        <span class="c1"># -&gt; it probably doesn&#39;t since I omitted the physical_max and digital_max</span>
+
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">freq</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">][</span><span class="n">label</span><span class="p">]</span>
+            <span class="n">time</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span> <span class="o">*</span> <span class="mi">1000</span> <span class="o">/</span> <span class="n">freq</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>
+                    <span class="nb">range</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="s1">&#39;num_records&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;num_samples&#39;</span><span class="p">][</span><span class="n">label</span><span class="p">])]</span>  <span class="c1"># should be in milliseconds now</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;signal&quot;</span><span class="p">][</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">time</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">signal</span><span class="p">[</span><span class="n">label</span><span class="p">])])</span>
+
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;info&#39;</span><span class="p">][</span><span class="s1">&#39;frequencies&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;info&#39;</span><span class="p">][</span><span class="s1">&#39;patient_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;patient_id&#39;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;info&#39;</span><span class="p">][</span><span class="s1">&#39;startdate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;startdate&#39;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;info&#39;</span><span class="p">][</span><span class="s1">&#39;starttime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;starttime&#39;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;info&#39;</span><span class="p">][</span><span class="s1">&#39;physical_dim&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;physical_dim&#39;</span><span class="p">]</span>
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;info&#39;</span><span class="p">][</span><span class="s1">&#39;prefiltering&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="s1">&#39;prefiltering&#39;</span><span class="p">]</span>
+
+        <span class="n">data</span><span class="p">[</span><span class="s1">&#39;info&#39;</span><span class="p">][</span><span class="s1">&#39;events&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># not sure if this is a good enough way to represent events -</span>
+        <span class="c1"># maybe it should be a dictionary with some info about the event as key? and an array (of time stamps) as value</span>
+
+        <span class="k">return</span> <span class="n">data</span>
+
+<div class="viewcode-block" id="ImportedData.get_event_from_event_channel"><a class="viewcode-back" href="../../rst/eeg_data.html#eeg_data.ImportedData.ImportedData.get_event_from_event_channel">[docs]</a>    <span class="k">def</span> <span class="nf">get_event_from_event_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel_name</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extracts information about an event from a given channel (:argument channel_name).</span>
+<span class="sd">         </span>
+<span class="sd">        Extracts events in the simplest way -- it treats as an event marker a value of signal that is higher than </span>
+<span class="sd">        a given value (:keyword threshold). </span>
+<span class="sd">        This function works best when in the data there is a channel that has only non-zero values when the event occurs</span>
+<span class="sd">        (that is, a dedicated event channel).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># do we want to have some meta data about the event? what was it, e.g. how loud was the sound, etc.</span>
+        <span class="c1"># what other types of event extraction do we want?</span>
+
+        <span class="n">markers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;signal&#39;</span><span class="p">][</span><span class="n">channel_name</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">()[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">time</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;signal&#39;</span><span class="p">][</span><span class="n">channel_name</span><span class="p">][</span><span class="o">...</span><span class="p">,</span> <span class="n">x</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">:</span>  <span class="c1"># &quot;&gt;=&quot; was an arbitrary decision</span>
+                <span class="n">markers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;info&#39;</span><span class="p">][</span><span class="s1">&#39;events&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">markers</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="ImportedData.remove_channel"><a class="viewcode-back" href="../../rst/eeg_data.html#eeg_data.ImportedData.ImportedData.remove_channel">[docs]</a>    <span class="k">def</span> <span class="nf">remove_channel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Removes channel.&quot;&quot;&quot;</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;signal&quot;</span><span class="p">][</span><span class="n">channel_name</span><span class="p">]</span></div></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Michał Ciemiński.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

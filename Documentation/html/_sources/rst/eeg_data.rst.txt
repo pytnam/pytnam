@@ -1,0 +1,45 @@
+eeg\_data package
+=================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    eeg_data.input_interface
+
+Submodules
+----------
+
+eeg\_data\.DiscreteData module
+------------------------------
+
+.. automodule:: eeg_data.DiscreteData
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+eeg\_data\.Epoch module
+-----------------------
+
+.. automodule:: eeg_data.Epoch
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+eeg\_data\.ImportedData module
+------------------------------
+
+.. automodule:: eeg_data.ImportedData
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: eeg_data
+    :members:
+    :undoc-members:
+    :show-inheritance:

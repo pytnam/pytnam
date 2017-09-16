@@ -1,0 +1,30 @@
+analysis\.stats package
+=======================
+
+Submodules
+----------
+
+analysis\.stats\.ICA module
+---------------------------
+
+.. automodule:: analysis.stats.ICA
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+analysis\.stats\.PCA module
+---------------------------
+
+.. automodule:: analysis.stats.PCA
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: analysis.stats
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,0 +1,7 @@
+PipelineInfo module
+===================
+
+.. automodule:: PipelineInfo
+    :members:
+    :undoc-members:
+    :show-inheritance:

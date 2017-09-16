@@ -1,0 +1,38 @@
+reporting package
+=================
+
+Submodules
+----------
+
+reporting\.PipelineInfo module
+------------------------------
+
+.. automodule:: reporting.PipelineInfo
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+reporting\.PipelineReader module
+--------------------------------
+
+.. automodule:: reporting.PipelineReader
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+reporting\.PipelineWriter module
+--------------------------------
+
+.. automodule:: reporting.PipelineWriter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: reporting
+    :members:
+    :undoc-members:
+    :show-inheritance:

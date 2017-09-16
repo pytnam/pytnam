@@ -1,0 +1,7 @@
+pqt5 module
+===========
+
+.. automodule:: pqt5
+    :members:
+    :undoc-members:
+    :show-inheritance:

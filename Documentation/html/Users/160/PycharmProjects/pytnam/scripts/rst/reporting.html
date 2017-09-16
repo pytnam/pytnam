@@ -1,0 +1,346 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>reporting package &mdash; Pytnam  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../../../search.html"/>
+    <link rel="top" title="Pytnam  documentation" href="../../../../../../index.html"/> 
+
+  
+  <script src="../../../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../../../index.html" class="icon icon-home"> Pytnam
+          
+
+          
+            
+            <img src="../../../../../../_static/pytnam.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">reporting package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-reporting.PipelineInfo">reporting.PipelineInfo module</a></li>
+<li><a class="reference internal" href="#module-reporting.PipelineReader">reporting.PipelineReader module</a></li>
+<li><a class="reference internal" href="#module-reporting.PipelineWriter">reporting.PipelineWriter module</a></li>
+<li><a class="reference internal" href="#module-reporting">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../../index.html">Pytnam</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../../../index.html">Docs</a> &raquo;</li>
+        
+      <li>reporting package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../../../../_sources/Users/160/PycharmProjects/pytnam/scripts/rst/reporting.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="reporting-package">
+<h1>reporting package<a class="headerlink" href="#reporting-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-reporting.PipelineInfo">
+<span id="reporting-pipelineinfo-module"></span><h2>reporting.PipelineInfo module<a class="headerlink" href="#module-reporting.PipelineInfo" title="Permalink to this headline">¶</a></h2>
+<p>A simple info-holder class used for pipeline writing/reading.
+It provides info about the Pytnam pipeline it is associated with.
+An instance of this class should be created once for each analysis pipeline created by the user.
+The data in String format should be provided by user through UI methods (an initial prompt, etc.).
+The XML representation of a PipelineInfo object forms the first node in an XML pipeline document as created by PipelineWriter.</p>
+<dl class="class">
+<dt id="reporting.PipelineInfo.PipelineInfo">
+<em class="property">class </em><code class="descclassname">reporting.PipelineInfo.</code><code class="descname">PipelineInfo</code><span class="sig-paren">(</span><em>author_name</em>, <em>pipeline_name</em>, <em>data_description</em>, <em>analysis_date=datetime.datetime(2017</em>, <em>9</em>, <em>17</em>, <em>0</em>, <em>10</em>, <em>4</em>, <em>768388)</em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../../_modules/reporting/PipelineInfo.html#PipelineInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reporting.PipelineInfo.PipelineInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="reporting.PipelineInfo.PipelineInfo.analysis_date">
+<code class="descname">analysis_date</code><em class="property"> = None</em><a class="headerlink" href="#reporting.PipelineInfo.PipelineInfo.analysis_date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="reporting.PipelineInfo.PipelineInfo.author_name">
+<code class="descname">author_name</code><em class="property"> = ''</em><a class="headerlink" href="#reporting.PipelineInfo.PipelineInfo.author_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="reporting.PipelineInfo.PipelineInfo.data_description">
+<code class="descname">data_description</code><em class="property"> = ''</em><a class="headerlink" href="#reporting.PipelineInfo.PipelineInfo.data_description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="reporting.PipelineInfo.PipelineInfo.pipeline_name">
+<code class="descname">pipeline_name</code><em class="property"> = ''</em><a class="headerlink" href="#reporting.PipelineInfo.PipelineInfo.pipeline_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="reporting.PipelineInfo.PipelineInfo.return_as_node">
+<code class="descname">return_as_node</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../../_modules/reporting/PipelineInfo.html#PipelineInfo.return_as_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reporting.PipelineInfo.PipelineInfo.return_as_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standard method used by PipelineWriter objects.
+:return: lxml Element node, structured as follows:
+&lt;pipeline_info&gt;</p>
+<blockquote>
+<div>&lt;author_name author=”name here”/&gt;
+&lt;pipeline_name pipeline=”sth here”/&gt;
+&lt;data_description data=”descr here”/&gt;
+&lt;analysis_date date=”datestring here”/&gt;</div></blockquote>
+<p>&lt;/pipeline_info&gt;</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-reporting.PipelineReader">
+<span id="reporting-pipelinereader-module"></span><h2>reporting.PipelineReader module<a class="headerlink" href="#module-reporting.PipelineReader" title="Permalink to this headline">¶</a></h2>
+<p>A reader for XML files representing Pytnam analyses, enabling to reconstruct the whole analysis step-by-step.
+It works on an XML pipeline representation as specified in the PipelineWriter class.</p>
+<dl class="class">
+<dt id="reporting.PipelineReader.PipelineReader">
+<em class="property">class </em><code class="descclassname">reporting.PipelineReader.</code><code class="descname">PipelineReader</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../../_modules/reporting/PipelineReader.html#PipelineReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reporting.PipelineReader.PipelineReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="reporting.PipelineReader.PipelineReader.filename">
+<code class="descname">filename</code><em class="property"> = ''</em><a class="headerlink" href="#reporting.PipelineReader.PipelineReader.filename" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="reporting.PipelineReader.PipelineReader.read_pipeline">
+<code class="descname">read_pipeline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../../../../_modules/reporting/PipelineReader.html#PipelineReader.read_pipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reporting.PipelineReader.PipelineReader.read_pipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method reads a Pytnam Pipeline from an XML file. NOT FUNCTIONAL NOW
+Validation against Pytnam schema will be added soon.
+:return: defaultdict[String: Reportable] - dictionary with string keys and newly created analysis classes as values</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-reporting.PipelineWriter">
+<span id="reporting-pipelinewriter-module"></span><h2>reporting.PipelineWriter module<a class="headerlink" href="#module-reporting.PipelineWriter" title="Permalink to this headline">¶</a></h2>
+<p>Tool for writing Pytnam pipelines to XML.
+Each Pytnam Pipeline XML file has the following structure:
+&lt;pytnam_pipeline&gt;</p>
+<blockquote>
+<div><p>&lt;pipeline_info&gt;
+—-4 nodes here: &lt;author_name&gt;, &lt;pipeline_name&gt;, &lt;data_description&gt;, &lt;analysis_date&gt;—-
+&lt;/pipeline_info&gt;
+&lt;pipeline_body&gt;
+—-arbitrary number of nodes here, each of the form:</p>
+<blockquote>
+<div>&lt;analysis&gt;
+—-arbitrary no. of nodes here, including &lt;analysis_name&gt; and &lt;parameters&gt; node with children.—-
+&lt;analysis&gt;</div></blockquote>
+<p>&lt;/pipeline_body</p>
+</div></blockquote>
+<p>&lt;/pytnam_pipeline&gt;</p>
+<p>Every analysis/stats class implementing Reportable should be able to return its XML node representation.</p>
+<dl class="class">
+<dt id="reporting.PipelineWriter.PipelineWriter">
+<em class="property">class </em><code class="descclassname">reporting.PipelineWriter.</code><code class="descname">PipelineWriter</code><span class="sig-paren">(</span><em>pipeline_as_list</em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../../_modules/reporting/PipelineWriter.html#PipelineWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reporting.PipelineWriter.PipelineWriter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="reporting.PipelineWriter.PipelineWriter.pipeline_as_list">
+<code class="descname">pipeline_as_list</code><em class="property"> = None</em><a class="headerlink" href="#reporting.PipelineWriter.PipelineWriter.pipeline_as_list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="reporting.PipelineWriter.PipelineWriter.write_to_file">
+<code class="descname">write_to_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../../../../../../_modules/reporting/PipelineWriter.html#PipelineWriter.write_to_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#reporting.PipelineWriter.PipelineWriter.write_to_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the pipeline to XML file.
+:param filename: name of the destination XML file; must end with ‘.xml’</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-reporting">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-reporting" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Michał Ciemiński.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

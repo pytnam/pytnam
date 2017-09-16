@@ -1,0 +1,38 @@
+test package
+============
+
+Submodules
+----------
+
+test\.test\_ICA module
+----------------------
+
+.. automodule:: test.test_ICA
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+test\.test\_PCA module
+----------------------
+
+.. automodule:: test.test_PCA
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+test\.test\_pipelineInfo module
+-------------------------------
+
+.. automodule:: test.test_pipelineInfo
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: test
+    :members:
+    :undoc-members:
+    :show-inheritance:

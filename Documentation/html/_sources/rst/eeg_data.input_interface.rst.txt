@@ -1,0 +1,22 @@
+eeg\_data\.input\_interface package
+===================================
+
+Submodules
+----------
+
+eeg\_data\.input\_interface\.Reader module
+------------------------------------------
+
+.. automodule:: eeg_data.input_interface.Reader
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: eeg_data.input_interface
+    :members:
+    :undoc-members:
+    :show-inheritance:
